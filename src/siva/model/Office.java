@@ -6,6 +6,7 @@
 package siva.model;
 
 import java.util.ArrayList;
+import static java.util.Collections.synchronizedList;
 import java.util.List;
 
 /**
@@ -23,7 +24,8 @@ all possible
 public class Office {
     
     private String address;
-    private List<Vehicle> vehicles;
+   // private List<Vehicle> vehicles;
+    private List<Vehicle> vehicles = synchronizedList(new ArrayList<Vehicle>());
     private final int capacity;
 
     public Office(String address, List<Vehicle> vehicles, int capacity) {
@@ -40,7 +42,7 @@ public class Office {
         this.address = address;
     }
     
-    public boolean assign(Vehicle vehicle){
+    public synchronized boolean assign(Vehicle vehicle){
         if (vehicles.size() >= capacity){
             return false;
         }
@@ -48,15 +50,33 @@ public class Office {
         return true;
     }
   
-       public boolean withdraw(Vehicle vehicle){
+       public synchronized boolean withdraw(Vehicle vehicle){
        return vehicles.remove(vehicle);       
     }
   
-          public boolean check(Vehicle vehicle){
-              
+          public synchronized boolean check(Vehicle vehicle){
+            
     return true;
     }
   
+          
+     public List<Vehicle> getbyMake(String manufacturer)
+          {
+              List<Vehicle> result = new ArrayList<Vehicle>();
+              
+              Vehicle[] copy;
+              synchronized(this){
+                  copy = vehicles.toArray(new Vehicle[0]);
+              }
+              for(Vehicle V: vehicles)
+              {
+                  if (V.getManufacturer().equals(manufacturer))
+                  {
+                      result.add(V);
+                  }
+              }
+              return result;
+          }     
     
     
 }
